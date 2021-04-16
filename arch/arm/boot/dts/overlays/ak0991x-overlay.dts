@@ -1,0 +1,45 @@
+// Definitions for AK09917
+/dts-v1/;
+/plugin/;
+
+/ {
+        compatible = "brcm,bcm2711";
+        fragment@0 {
+                target = <&gpio>;
+                __overlay__ {
+                        ak0991x_pins: ak0991x_pins {
+                                brcm,pins = <4 17>;    // <rstn drdy>
+                                brcm,function = <1 0>; // 0:in, 1:out
+                                brcm,pull = <0 2>      // 2:up 1:down 0:none
+                        };
+                };
+        };
+
+        fragment@1 {
+                target = <&i2c1>;
+                __overlay__ {
+                        status = "okay";
+                        clock-frequency = <400000>;
+
+                        ak09917d: ak09917d@c {
+                                compatible = "akm,ak09917d";
+                                reg = <0xc>;
+                                pinctrl-names = "default";
+                                pinctrl-0 = <&ak0991x_pins>;
+                                interrupt-parent = <&gpio>;
+                                // interrupts = <gpio_number direction>
+                                // 1 = low-to-high edge triggered.
+                                // 2 = high-to-low edge triggered.
+                                // 4 = active high level-sensitive.
+                                // 8 = active low level-sensitive.
+                                interrupts = <17 2>;
+                        };
+                };
+        };
+
+        __overrides__ {
+                interrupt = <&ak0991x_pins>,"brcm,pins:0",
+                          <&ak09917d>,"interrupts:0";
+                addr = <&ak09917d>,"reg:0";
+        };
+};
