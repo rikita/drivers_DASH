@@ -1,0 +1,25 @@
+* Asahi Kasei AK0991X magnetometer sensor
+
+Required properties:
+
+- compatible:
+    * "akm,ak09915"
+	* "akm,ak09915d"
+	* "akm,ak09916"
+	* "akm,ak09916d"
+	* "akm,ak09917d"
+	* "akm,ak09918"
+	* "akm,ak09919"
+- reg : the I2C address of the magnetometer
+
+Optional properties:
+
+- gpios : should be device tree identifier of the magnetometer DRDY pin
+
+
+Example:
+
+ak09918@c {
+	compatible = "akm,ak08919";
+	reg = <0x0f>;
+};

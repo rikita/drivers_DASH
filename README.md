@@ -20,3 +20,9 @@ Apply the patch to the kernel.
 $ patch -p0 < rpi_5.10.27.patch
 ~~~
 
+## Add overlays
+Add the following line to 'config.txt'
+
+~~~
+dtoverlay=ak0991x
+~~~

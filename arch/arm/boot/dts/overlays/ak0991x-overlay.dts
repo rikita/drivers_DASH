@@ -21,7 +21,7 @@
                         status = "okay";
                         clock-frequency = <400000>;
 
-                        ak09917d: ak09917d@c {
+                        ak0991x: ak0991x@c {
                                 compatible = "akm,ak09917d";
                                 reg = <0xc>;
                                 pinctrl-names = "default";
@@ -39,7 +39,7 @@
 
         __overrides__ {
                 interrupt = <&ak0991x_pins>,"brcm,pins:0",
-                          <&ak09917d>,"interrupts:0";
-                addr = <&ak09917d>,"reg:0";
+                          <&ak0991x>,"interrupts:0";
+                addr = <&ak0991x>,"reg:0";
         };
 };

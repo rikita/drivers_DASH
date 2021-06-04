@@ -21,7 +21,6 @@
 /*#define VERBOSE_DEBUG*/
 
 #include <asm/div64.h>
-#include <linux/ak0991x.h>
 #include <linux/err.h>
 #include <linux/delay.h>
 #include <linux/gpio.h>
@@ -326,8 +325,6 @@ struct ak0991x_data {
 	s64 prev_time_ns;
 
 	const struct ak0991x_bus_ops *bops;
-
-	struct ak0991x_platform_data *pdata;
 };
 
 /* supported frequency (0 means stop measurement) */
@@ -1846,26 +1843,13 @@ static const struct iio_info ak0991x_info = {
 /******************************************************************************/
 static int ak0991x_device_power_on(struct ak0991x_data *akm)
 {
-	int ret = 0;
-
 	dev_dbg(akm->dev, "%s called", __func__);
-
-	/* TODO: platform data will not be able to use with device tree */
-	if (akm->pdata)
-		if (akm->pdata->power_on)
-			ret = akm->pdata->power_on();
-
-	return ret;
+	return 0;
 }
 
 static void ak0991x_device_power_off(struct ak0991x_data *akm)
 {
 	dev_dbg(akm->dev, "%s called", __func__);
-
-	/* TODO: platform data will not be able to use with device tree */
-	if (akm->pdata)
-		if (akm->pdata->power_off)
-			akm->pdata->power_off();
 }
 
 int ak0991x_resume(struct ak0991x_data *akm)
@@ -1909,16 +1893,6 @@ static void ak0991x_init_axis(struct ak0991x_data *akm)
 		if (of_property_read_u8(node, "axis_sign_z",
 					&akm->axis_sign[2]) != 0)
 			goto SET_DEFAULT_AXIS;
-	} else {
-		/* platform data is NULL, use default value. */
-		if (!akm->pdata)
-			goto SET_DEFAULT_AXIS;
-
-		/* get from pdata */
-		for (i = 0; i < 3; i++) {
-			akm->axis_order[i] = akm->pdata->axis_order[i];
-			akm->axis_sign[i] = akm->pdata->axis_sign[i];
-		}
 	}
 
 	dev_dbg(akm->dev, "%s : axis=[%d,%d,%d] sign=[%d,%d,%d]", __func__,
@@ -1960,7 +1934,6 @@ struct iio_dev *ak0991x_probe(struct device *dev, int irq,
 	/*** setup akm parameter ***/
 	akm->dev = dev;
 	akm->bops = bops;
-	akm->pdata = dev->platform_data;
 	akm->irq = irq;
 
 	/* device is in powerdown mode just after the power on */
